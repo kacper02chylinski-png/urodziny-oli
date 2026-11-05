@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#110923">
+  <meta name="description" content="Mała urodzinowa niespodzianka dla Oli 💗">
+  <title>Mała niespodzianka dla Oli 💗</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --white: #fff9ff;
+      --muted: #d6c5e5;
+      --pink: #ff7ec8;
+      --rose: #ffafd9;
+      --violet: #c6a0ff;
+      --shadow: 0 24px 100px rgba(0, 0, 0, .32);
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100svh;
+      overflow-x: hidden;
+      font-family: ui-rounded, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--white);
+      background: #110923;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    [hidden] { display: none !important; }
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 12% 15%, rgba(130, 71, 194, .48), transparent 39%),
+        radial-gradient(ellipse at 85% 20%, rgba(251, 77, 155, .28), transparent 36%),
+        radial-gradient(ellipse at 70% 87%, rgba(92, 72, 208, .38), transparent 46%),
+        linear-gradient(135deg, #0c0820, #211034 46%, #130924);
+    }
+    .backdrop::before, .backdrop::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(#ffffffb0 1px, transparent 1.6px),
+        radial-gradient(#ffd8f58c 1px, transparent 1.8px);
+      background-size: 88px 88px, 137px 137px;
+      background-position: 13px 27px, 72px 41px;
+      opacity: .32;
+      animation: sparkle 8s ease-in-out infinite alternate;
+    }
+    .backdrop::after { transform: scale(1.5) rotate(12deg); opacity: .16; animation-delay: -3s; }
+    .blob {
+      position: absolute;
+      width: 36vw;
+      height: 36vw;
+      min-width: 250px;
+      min-height: 250px;
+      border-radius: 50%;
+      background: rgba(254, 112, 195, .12);
+      filter: blur(55px);
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .blob.one { top: -17%; left: -10%; }
+    .blob.two { bottom: -22%; right: -10%; background: rgba(152, 109, 255, .18); animation-delay: -5s; }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 36px 18px;
+    }
+    .glass {
+      width: min(100%, 690px);
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: linear-gradient(160deg, rgba(255, 255, 255, .125), rgba(255, 255, 255, .055));
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-radius: 29px;
+      box-shadow: var(--shadow);
+    }
+    .quiz-card { padding: clamp(25px, 5.7vw, 51px); animation: appear .7s both; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 185, 233, .28);
+      background: rgba(255, 112, 196, .11);
+      color: #ffd4ed;
+      font-size: .76rem;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+    }
+    h1, h2, p { margin-top: 0; }
+    .quiz-card h1 {
+      max-width: 560px;
+      font-size: clamp(2.15rem, 6vw, 3.35rem);
+      line-height: 1.1;
+      letter-spacing: -.055em;
+      margin: 24px 0 12px;
+      font-weight: 900;
+    }
+    .gradient-text {
+      background: linear-gradient(100deg, #ffe7f6, #ff91d2 55%, #d2b1ff);
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .lead { color: var(--muted); line-height: 1.7; font-size: .98rem; margin-bottom: 28px; }
+    fieldset { border: 0; padding: 0; margin: 0 0 19px; min-width: 0; }
+    legend {
+      width: 100%;
+      display: flex;
+      gap: 13px;
+      align-items: baseline;
+      line-height: 1.35;
+      margin: 0 0 12px;
+      font-size: 1.03rem;
+      font-weight: 750;
+    }
+    legend .index { color: #fc9dd3; font-weight: 800; font-size: .84rem; letter-spacing: .08em; }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .choice { position: relative; display: block; cursor: pointer; }
+    .choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .choice span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+      padding: 14px 9px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: rgba(255, 255, 255, .055);
+      color: #f4e7fa;
+      font-size: .94rem;
+      font-weight: 790;
+      transition: transform .18s, border-color .18s, background .18s, box-shadow .18s;
+    }
+    .choice:hover span { border-color: #ffb2df77; background: rgba(255, 255, 255, .095); transform: translateY(-1px); }
+    .choice input:checked + span { border-color: #ffb0e5; background: rgba(255, 109, 194, .19); box-shadow: inset 0 0 0 1px rgba(255, 178, 226, .25); }
+    .choice input:focus-visible + span { outline: 3px solid var(--rose); outline-offset: 3px; }
+    .form-status { min-height: 21px; text-align: center; font-size: .88rem; color: #ffd9ed; font-weight: 600; margin: 4px 0 11px; }
+    .progress-track { height: 5px; border-radius: 10px; background: rgba(255, 255, 255, .14); overflow: hidden; margin-bottom: 17px; }
+    .progress-bar { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #ff84c8, #c59bff); transition: width .3s ease; }
+    .primary {
+      display: block;
+      width: 100%;
+      min-height: 55px;
+      border: 0;
+      border-radius: 15px;
+      color: #27102e;
+      background: linear-gradient(95deg, #ff94cf, #ffc0dd 48%, #c9a6ff);
+      font-weight: 900;
+      font-size: 1.03rem;
+      letter-spacing: -.01em;
+      box-shadow: 0 12px 28px rgba(245, 99, 180, .2);
+      transition: transform .15s, filter .15s;
+    }
+    .primary:hover { filter: brightness(1.06); transform: translateY(-2px); }
+    .primary:active { transform: translateY(1px); }
+    .footnote { text-align: center; color: #bdabcd; font-size: .78rem; margin: 17px 0 0; }
+    .shake { animation: shake .35s ease; }
+
+    /* Drugi ekran: niespodzianka */
+    .wish-screen { overflow: hidden; isolation: isolate; }
+    .wish-screen .back-glow {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255, 87, 176, .19), transparent 57%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .photo-stage, .confetti-stage, .heart-stage { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .photo-stage { z-index: 1; }
+    .heart-stage { z-index: 2; }
+    .confetti-stage { z-index: 5; }
+    .photo {
+      position: absolute;
+      width: clamp(110px, 13vw, 183px);
+      height: clamp(133px, 16vw, 215px);
+      padding: 8px 8px 27px;
+      border-radius: 5px;
+      background: #fff6fc;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, .28);
+      transform: rotate(var(--rotation));
+      animation: photoFloat var(--duration) ease-in-out var(--delay) infinite alternate, photoAppear 1.2s both;
+      opacity: .88;
+      filter: drop-shadow(0 0 10px #f78ac52a);
+    }
+    .photo img { width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 2px; }
+    .photo.emoji-frame { display: grid; place-items: center; background: #fff3fa; }
+    .photo.emoji-frame span { font-size: clamp(3.2rem, 7vw, 5rem); line-height: 1; transform: translateY(-9px); }
+    .wish-card {
+      position: relative;
+      z-index: 3;
+      width: min(100%, 665px);
+      padding: clamp(29px, 5.6vw, 58px);
+      text-align: center;
+      background: linear-gradient(150deg, rgba(36, 15, 60, .89), rgba(52, 21, 68, .79));
+      border-color: rgba(255, 202, 232, .35);
+      animation: wishAppear .95s cubic-bezier(.2, .85, .25, 1) both;
+      box-shadow: 0 30px 100px #0904198a, 0 0 90px #ed85cd22;
+    }
+    .wish-icon { font-size: clamp(2.8rem, 9vw, 4.6rem); margin: 3px 0 14px; animation: bounce 3s ease-in-out infinite; }
+    .wish-card h2 { font-size: clamp(2.55rem, 7.5vw, 4.65rem); line-height: 1.07; letter-spacing: -.06em; margin-bottom: 18px; font-weight: 900; }
+    .wish-card .big { color: #ffb4df; }
+    .wish-copy { color: #f8e9fa; font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.85; margin: 0 auto 18px; max-width: 520px; }
+    .sign { color: #ffc4e7; font-weight: 850; font-size: 1.12rem; margin-top: 18px; }
+    .wish-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+    .mini-button {
+      border: 1px solid rgba(255, 203, 239, .42);
+      border-radius: 999px;
+      padding: 11px 18px;
+      background: rgba(255, 255, 255, .10);
+      color: white;
+      font-weight: 780;
+      transition: transform .15s, background .15s;
+    }
+    .mini-button:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .17); }
+    .mini-button:focus-visible, .primary:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    .heart {
+      position: absolute;
+      font-size: var(--size);
+      left: var(--left);
+      bottom: -60px;
+      opacity: .62;
+      animation: heartUp var(--time) linear var(--wait) infinite;
+    }
+    .confetti {
+      position: absolute;
+      top: -30px;
+      width: var(--w);
+      height: var(--h);
+      left: var(--x);
+      border-radius: 2px;
+      background: var(--color);
+      opacity: .95;
+      animation: confettiFall var(--fall) linear var(--wait) forwards;
+    }
+    @keyframes appear { from { opacity: 0; transform: translateY(20px) scale(.97); } to { opacity: 1; transform: none; } }
+    @keyframes wishAppear { from { opacity: 0; transform: translateY(40px) scale(.88); } to { opacity: 1; transform: none; } }
+    @keyframes photoAppear { from { opacity: 0; } to { opacity: .9; } }
+    @keyframes sparkle { from { opacity: .2; } to { opacity: .5; } }
+    @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(85px, 65px); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 50% { transform: translateX(7px); } 75% { transform: translateX(-4px); } }
+    @keyframes photoFloat {
+      from { transform: translate3d(-8px, 14px, 0) rotate(var(--rotation)); }
+      to { transform: translate3d(18px, -35px, 0) rotate(calc(var(--rotation) + 8deg)); }
+    }
+    @keyframes heartUp { from { transform: translateY(0) rotate(-20deg); opacity: 0; } 15% { opacity: .65; } 85% { opacity: .4; } to { transform: translateY(-115vh) rotate(35deg); opacity: 0; } }
+    @keyframes confettiFall { 0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; } 90% { opacity: 1; } 100% { transform: translate3d(var(--sway), 108vh, 0) rotate(var(--spin)); opacity: 0; } }
+    @keyframes bounce { 0%, 100% { transform: rotate(-6deg) scale(1); } 50% { transform: rotate(6deg) scale(1.08); } }
+    @media (max-width: 560px) {
+      .screen { padding: 18px 13px; }
+      .quiz-card { border-radius: 23px; }
+      .quiz-card h1 { margin-top: 17px; }
+      .lead { margin-bottom: 24px; }
+      fieldset { margin-bottom: 17px; }
+      legend { font-size: .96rem; }
+      .choices { gap: 9px; }
+      .choice span { padding: 13px 7px; }
+      .photo { width: 95px; height: 121px; padding: 5px 5px 19px; opacity: .72; }
+      .wish-card { padding: 30px 23px; }
+      .wish-copy { line-height: 1.72; }
+      .wish-actions { margin-top: 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"><div class="blob one"></div><div class="blob two"></div></div>
+
+  <main>
+    <section class="screen" id="quizScreen" aria-labelledby="quizTitle">
+      <div class="glass quiz-card" id="quizCard">
+        <div class="eyebrow">✦ 5 listopada • tajna niespodzianka ✦</div>
+        <h1 id="quizTitle">Hej, hej! <span class="gradient-text">Mały test na wejście.</span> 💌</h1>
+        <p class="lead">Zanim odkryjesz, co się tu kryje, musimy upewnić się, że jesteś właściwą osobą. Odpowiedz na trzy BARDZO ważne pytania.</p>
+
+        <form id="birthdayForm" novalidate>
+          <fieldset>
+            <legend><span class="index">01</span> Czy masz na imię Ola?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="p1" value="tak"><span>💗 TAK</span></label>
+              <label class="choice"><input type="radio" name="p1" value="nie"><span>🙈 NIE</span></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><span class="index">02</span> Czy masz urodziny 5 listopada?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="p2" value="tak"><span>🎂 TAK</span></label>
+              <label class="choice"><input type="radio" name="p2" value="nie"><span>😅 NIE</span></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><span class="index">03</span> Czy Kiciuś to Twój najlepszy, najukochańszy bestie?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="p3" value="tak"><span>🥹 TAK</span></label>
+              <label class="choice"><input type="radio" name="p3" value="nie"><span>😼 NIE</span></label>
+            </div>
+          </fieldset>
+          <div class="form-status" id="formStatus" role="status" aria-live="polite">Odpowiedz na wszystkie 3 pytania ✨</div>
+          <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+          <button class="primary" type="submit">Otwórz niespodziankę 💌</button>
+        </form>
+        <p class="footnote">Psst... tylko trzy TAK otwierają tajemnicę 🤫</p>
+      </div>
+    </section>
+
+    <section class="screen wish-screen" id="wishScreen" aria-labelledby="wishTitle" hidden>
+      <div class="back-glow" aria-hidden="true"></div>
+      <div id="photoStage" class="photo-stage" aria-hidden="true"></div>
+      <div id="heartStage" class="heart-stage" aria-hidden="true"></div>
+      <div id="confettiStage" class="confetti-stage" aria-hidden="true"></div>
+      <div class="glass wish-card">
+        <div class="eyebrow">✦ Oficjalnie: to Twój dzień! ✦</div>
+        <div class="wish-icon" aria-hidden="true">🎂💖</div>
+        <h2 id="wishTitle">Ola, <span class="gradient-text">wszystkiego najlepszego!</span></h2>
+        <p class="wish-copy">Życzę Ci tyle śmiechu, że zabraknie tchu, tyle pięknych wspomnień, że zabraknie miejsca w galerii, i spełnienia wszystkich marzeń — nawet tych najbardziej szalonych.</p>
+        <p class="wish-copy">Niech każdy dzień przynosi Ci coś dobrego, a wokół zawsze będą ludzie, którzy kochają Cię taką, jaka jesteś. Dziękuję, że jesteś. 💗</p>
+        <p class="sign">Ściskam najmocniej, Twój Kiciuś 🐾</p>
+        <div class="wish-actions">
+          <button id="moreConfetti" class="mini-button" type="button">Jeszcze więcej konfetti 🎉</button>
+          <button id="startAgain" class="mini-button" type="button">Jeszcze raz od początku ↻</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ───────────────────────────────────────────────────────────────
+    // TUTAJ DODAJESZ ZDJĘCIA:
+    // Wgraj pliki foto1.jpg, foto2.jpg... do tego samego folderu,
+    // w którym znajduje się index.html. Możesz dodać od 1 do 8 zdjęć.
+    // Jeśli zdjęć jeszcze nie ma, zobaczysz dekoracyjne emoji.
+    // ───────────────────────────────────────────────────────────────
+    const PHOTO_FILES = [
+      'foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg',
+      'foto5.jpg', 'foto6.jpg', 'foto7.jpg', 'foto8.jpg'
+    ];
+
+    const form = document.getElementById('birthdayForm');
+    const quizScreen = document.getElementById('quizScreen');
+    const wishScreen = document.getElementById('wishScreen');
+    const status = document.getElementById('formStatus');
+    const progressBar = document.getElementById('progressBar');
+    const quizCard = document.getElementById('quizCard');
+    const photoStage = document.getElementById('photoStage');
+    const heartStage = document.getElementById('heartStage');
+    const confettiStage = document.getElementById('confettiStage');
+    let photosReady = false;
+
+    function answers() {
+      return ['p1', 'p2', 'p3'].map(name => form.querySelector('input[name="' + name + '"]:checked')?.value);
+    }
+
+    function updateProgress() {
+      const count = answers().filter(Boolean).length;
+      progressBar.style.width = (count / 3 * 100) + '%';
+      status.textContent = count === 3 ? 'Komplet odpowiedzi! Możesz sprawdzić 💖' :
+        count === 0 ? 'Odpowiedz na wszystkie 3 pytania ✨' : `${count} z 3 odpowiedzi wybranych ✨`;
+    }
+
+    form.addEventListener('change', updateProgress);
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const values = answers();
+      if (values.some(v => !v)) {
+        status.textContent = 'Hej! Najpierw zaznacz odpowiedź na każde pytanie 👀';
+        quizCard.classList.remove('shake');
+        void quizCard.offsetWidth;
+        quizCard.classList.add('shake');
+        return;
+      }
+      if (values.some(v => v !== 'tak')) {
+        status.textContent = 'Ups! Coś się nie zgadza... Kiciuś prosi o ponowne przemyślenie odpowiedzi 😼💗';
+        quizCard.classList.remove('shake');
+        void quizCard.offsetWidth;
+        quizCard.classList.add('shake');
+        return;
+      }
+      quizScreen.hidden = true;
+      wishScreen.hidden = false;
+      window.scrollTo(0, 0);
+      createHearts();
+      launchConfetti();
+      if (!photosReady) {
+        photosReady = true;
+        await createPhotos();
+      }
+    });
+
+    // Zdjęcia są ładowane tylko wtedy, gdy istnieją. Nie trzeba wrzucać wszystkich ośmiu.
+    function imageExists(path) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(path);
+        img.onerror = () => resolve(null);
+        img.src = path;
+      });
+    }
+
+    async function createPhotos() {
+      const found = (await Promise.all(PHOTO_FILES.map(imageExists))).filter(Boolean);
+      // Pozycje przy krawędziach, aby życzenia zostały czytelne.
+      const positions = [
+        [2, 6, -14], [78, 8, 12], [3, 55, 10], [80, 59, -12],
+        [23, -8, 9], [59, 82, -8], [0, 83, -11], [89, 34, 8]
+      ];
+      const photos = found.length ? found : ['🎁', '💝', '🎈', '🎀', '✨', '🥳'];
+      photos.forEach((value, i) => {
+        const [x, y, rotation] = positions[i % positions.length];
+        const card = document.createElement('div');
+        card.className = 'photo' + (found.length ? '' : ' emoji-frame');
+        card.style.left = x + '%';
+        card.style.top = y + '%';
+        card.style.setProperty('--rotation', rotation + 'deg');
+        card.style.setProperty('--duration', (5.2 + (i % 4) * 1.2) + 's');
+        card.style.setProperty('--delay', (-i * .7) + 's');
+        if (found.length) {
+          const image = document.createElement('img');
+          image.src = value;
+          image.alt = '';
+          card.appendChild(image);
+        } else {
+          const emoji = document.createElement('span');
+          emoji.textContent = value;
+          card.appendChild(emoji);
+        }
+        photoStage.appendChild(card);
+      });
+    }
+
+    function createHearts() {
+      if (heartStage.childElementCount) return;
+      const hearts = ['💗', '💖', '💕', '✨', '🤍'];
+      for (let i = 0; i < 22; i++) {
+        const element = document.createElement('span');
+        element.className = 'heart';
+        element.textContent = hearts[i % hearts.length];
+        element.style.setProperty('--left', ((i * 31 + 7) % 100) + '%');
+        element.style.setProperty('--size', (13 + (i % 5) * 4) + 'px');
+        element.style.setProperty('--time', (8 + i % 8) + 's');
+        element.style.setProperty('--wait', (-i * .77) + 's');
+        heartStage.appendChild(element);
+      }
+    }
+
+    function launchConfetti() {
+      confettiStage.replaceChildren();
+      const palette = ['#ff83ca', '#ffde78', '#b5a0ff', '#ffe6f6', '#74dfd4', '#f9a7ff'];
+      for (let i = 0; i < 135; i++) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti';
+        piece.style.setProperty('--x', (Math.random() * 100) + '%');
+        piece.style.setProperty('--w', (5 + Math.random() * 7) + 'px');
+        piece.style.setProperty('--h', (8 + Math.random() * 10) + 'px');
+        piece.style.setProperty('--color', palette[i % palette.length]);
+        piece.style.setProperty('--fall', (3.7 + Math.random() * 3.1) + 's');
+        piece.style.setProperty('--wait', (Math.random() * 1.8) + 's');
+        piece.style.setProperty('--sway', (-90 + Math.random() * 180) + 'px');
+        piece.style.setProperty('--spin', (-850 + Math.random() * 1700) + 'deg');
+        confettiStage.appendChild(piece);
+      }
+    }
+
+    document.getElementById('moreConfetti').addEventListener('click', launchConfetti);
+    document.getElementById('startAgain').addEventListener('click', () => {
+      wishScreen.hidden = true;
+      quizScreen.hidden = false;
+      form.reset();
+      updateProgress();
+      confettiStage.replaceChildren();
+      window.scrollTo(0, 0);
+    });
+  </script>
+</body>
+</html>
